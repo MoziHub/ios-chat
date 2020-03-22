@@ -113,7 +113,7 @@
         if (info.isTop) {
             [self.contentView setBackgroundColor:[UIColor colorWithHexString:@"0xf7f7f7"]];
         } else {
-            self.contentView.backgroundColor = [WFCUConfigManager globalManager].backgroudColor;
+            self.contentView.backgroundColor = [UIColor whiteColor];
         }
     }
     

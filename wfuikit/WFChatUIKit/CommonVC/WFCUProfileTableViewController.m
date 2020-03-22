@@ -38,6 +38,8 @@
 @property (strong, nonatomic)UITableViewCell *sendMessageCell;
 @property (strong, nonatomic)UITableViewCell *voipCallCell;
 @property (strong, nonatomic)UITableViewCell *addFriendCell;
+@property (strong, nonatomic)UITableViewCell *momentCell;
+
 
 @property (nonatomic, strong)UITableView *tableView;
 @property (nonatomic, strong)NSMutableArray<UITableViewCell *> *cells;
@@ -234,7 +236,22 @@
         [btn addTarget:self action:@selector(onSendMessageBtn:) forControlEvents:UIControlEventTouchDown];
         [self.sendMessageCell addSubview:btn];
         [self showSeparatorLine:self.sendMessageCell];
-
+        
+        self.momentCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"momentCell"];
+        for (UIView *subView in self.momentCell.subviews) {
+               [subView removeFromSuperview];
+        }
+        
+        UIButton *momentButton = [[UIButton alloc] initWithFrame:CGRectMake(16, 0, self.view.frame.size.width - 100, 70)];
+        [momentButton setTitle: @"朋友圈" forState:UIControlStateNormal];
+        [momentButton setTitleColor:[UIColor colorWithHexString:@"0x1d1d1d"] forState:UIControlStateNormal];
+        momentButton.titleLabel.font = [UIFont pingFangSCWithWeight:FontWeightStyleRegular size:16];
+        momentButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+        [momentButton addTarget:self action:@selector(momentClick) forControlEvents:UIControlEventTouchUpInside];
+        [self.momentCell addSubview:momentButton];
+        self.momentCell.selectionStyle = UITableViewCellSelectionStyleNone;
+        self.momentCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        
 #if WFCU_SUPPORT_VOIP
         self.voipCallCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell"];
         for (UIView *subView in self.voipCallCell.subviews) {
@@ -280,6 +297,10 @@
     WFCUMyPortraitViewController *pvc = [[WFCUMyPortraitViewController alloc] init];
     pvc.userId = self.userId;
     [self.navigationController pushViewController:pvc animated:YES];
+}
+
+- (void)momentClick {
+    
 }
 
 
@@ -347,7 +368,13 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) {
         return self.headerCells.count;
-    } else if(section == 1) {
+    } else if (section == 1) {
+        if (self.momentCell) {
+            return 1;
+        } else {
+            return 0;
+        }
+    } else if(section == 2) {
         return self.cells.count;
     } else {
         if (self.sendMessageCell) {
@@ -359,10 +386,14 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"section:%ld",(long)indexPath.section);
     if (indexPath.section == 0) {
        return self.headerCells[indexPath.row];
     } else if (indexPath.section == 1) {
-        return self.cells[indexPath.row];
+        return self.momentCell;
+    } else if (indexPath.section == 1) {
+           
+           return self.cells[indexPath.row];
     } else {
         if (self.sendMessageCell) {
             if (indexPath.row == 0) {
@@ -378,7 +409,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     if (self.sendMessageCell || self.voipCallCell || self.addFriendCell) {
-        return 3;
+        return 4;
     } else {
         return 2;
     }
@@ -414,8 +445,14 @@
             return 50;
         }
     } else if(indexPath.section == 1) {
-        return 48;
-    } else {
+        if (self.momentCell) {
+            return 70;
+        } else {
+            return 0;
+        }
+    } else if(indexPath.section == 2) {
+            return 50;
+    }  else {
         return 50;
     }
 }

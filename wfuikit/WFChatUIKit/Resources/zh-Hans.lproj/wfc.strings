@@ -46,7 +46,7 @@
 "Video"="视频";
 "Scale"="缩放";
 "CallEnded"="通话已结束";
-"WaitingAccept"="等待对方接听";
+"WaitingAccept"="正在等待对方接受邀请...";
 "CallConnecting"="连接建立中...";
 "InvitingYou"="对方正在邀请您通话...";
 "AddFriend"="添加好友";
