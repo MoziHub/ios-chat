@@ -1345,12 +1345,12 @@
 		2F55104F217F5CC100F56C26 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
-				2F551050217F5CC100F56C26 /* WFCUSwitchTableViewCell.m */,
 				2F551051217F5CC100F56C26 /* WFCUConversationSettingMemberCell.h */,
-				2F551052217F5CC100F56C26 /* WFCUSwitchTableViewCell.h */,
 				2F551053217F5CC100F56C26 /* WFCUConversationSettingMemberCell.m */,
 				2F5EB44622C2EEFC00BC8C90 /* WFCUGeneralSwitchTableViewCell.h */,
 				2F5EB44722C2EEFC00BC8C90 /* WFCUGeneralSwitchTableViewCell.m */,
+				2F551052217F5CC100F56C26 /* WFCUSwitchTableViewCell.h */,
+				2F551050217F5CC100F56C26 /* WFCUSwitchTableViewCell.m */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -1358,18 +1358,18 @@
 		2F551054217F5CC100F56C26 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
-				2F551055217F5CC100F56C26 /* WFCUConversationSettingMemberCollectionViewLayout.m */,
-				2F551056217F5CC100F56C26 /* WFCUConversationSettingViewController.m */,
-				2F551057217F5CC100F56C26 /* WFCUConversationSettingViewController.h */,
-				2F551058217F5CC100F56C26 /* WFCUConversationSettingMemberCollectionViewLayout.h */,
 				2F5EB43A22C2E21A00BC8C90 /* GroupManageTableViewController.h */,
 				2F5EB43B22C2E21A00BC8C90 /* GroupManageTableViewController.m */,
-				2F5EB43E22C2E6BB00BC8C90 /* ManagerTableViewController.h */,
-				2F5EB43F22C2E6BB00BC8C90 /* ManagerTableViewController.m */,
-				2F5EB44222C2EE1800BC8C90 /* GroupMuteTableViewController.h */,
-				2F5EB44322C2EE1800BC8C90 /* GroupMuteTableViewController.m */,
 				2F5EB44A22C2F36A00BC8C90 /* GroupMemberControlTableViewController.h */,
 				2F5EB44B22C2F36A00BC8C90 /* GroupMemberControlTableViewController.m */,
+				2F5EB44222C2EE1800BC8C90 /* GroupMuteTableViewController.h */,
+				2F5EB44322C2EE1800BC8C90 /* GroupMuteTableViewController.m */,
+				2F5EB43E22C2E6BB00BC8C90 /* ManagerTableViewController.h */,
+				2F5EB43F22C2E6BB00BC8C90 /* ManagerTableViewController.m */,
+				2F551058217F5CC100F56C26 /* WFCUConversationSettingMemberCollectionViewLayout.h */,
+				2F551055217F5CC100F56C26 /* WFCUConversationSettingMemberCollectionViewLayout.m */,
+				2F551057217F5CC100F56C26 /* WFCUConversationSettingViewController.h */,
+				2F551056217F5CC100F56C26 /* WFCUConversationSettingViewController.m */,
 				2F7381F42308F72F00213421 /* WFCUGroupMemberCollectionViewController.h */,
 				2F7381F52308F72F00213421 /* WFCUGroupMemberCollectionViewController.m */,
 			);
