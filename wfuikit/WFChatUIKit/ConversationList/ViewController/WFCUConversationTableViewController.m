@@ -31,6 +31,7 @@
 #import "UIImage+ERCategory.h"
 #import "UIFont+YH.h"
 #import "UIColor+YH.h"
+#import "WFCUSeletedUserViewController.h"
 @interface WFCUConversationTableViewController () <UISearchControllerDelegate, UISearchResultsUpdating, UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, strong)NSMutableArray<WFCCConversationInfo *> *conversations;
 
@@ -195,18 +196,13 @@
 }
 
 - (void)startChatAction:(id)sender {
-    WFCUContactListViewController *pvc = [[WFCUContactListViewController alloc] init];
-    pvc.selectContact = YES;
-    pvc.multiSelect = YES;
-    pvc.showCreateChannel = YES;
+    WFCUSeletedUserViewController *pvc = [[WFCUSeletedUserViewController alloc] init];
+    pvc.type = Horizontal;
+   UINavigationController *navi = [[UINavigationController alloc] initWithRootViewController:pvc];
+     navi.modalPresentationStyle = UIModalPresentationFullScreen;
   __weak typeof(self)ws = self;
-    pvc.createChannel = ^(void) {
-        WFCUCreateChannelViewController *vc = [[WFCUCreateChannelViewController alloc] init];
-        vc.hidesBottomBarWhenPushed = YES;
-        [self.navigationController pushViewController:vc animated:YES];
-    };
-    
     pvc.selectResult = ^(NSArray<NSString *> *contacts) {
+        [navi dismissViewControllerAnimated:NO completion:nil];
       if (contacts.count == 1) {
         WFCUMessageListViewController *mvc = [[WFCUMessageListViewController alloc] init];
         mvc.conversation = [WFCCConversation conversationWithType:Single_Type target:contacts[0] line:0];
@@ -222,7 +218,7 @@
         [ws.navigationController pushViewController:vc animated:YES];
       }
     };
-    UINavigationController *navi = [[UINavigationController alloc] initWithRootViewController:pvc];
+ 
     [self.navigationController presentViewController:navi animated:YES completion:nil];
 }
 

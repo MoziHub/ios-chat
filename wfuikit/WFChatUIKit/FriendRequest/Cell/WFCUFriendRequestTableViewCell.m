@@ -52,9 +52,10 @@
     self.acceptBtn = [[UIButton alloc] initWithFrame:CGRectMake(width - (46 + 16), 16, 46, 28)];
     [self.acceptBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.acceptBtn setTitle:WFCString(@"Accept") forState:UIControlStateNormal];
-    [self.acceptBtn setBackgroundColor:[UIColor colorWithHexString:@"0x4764dc"]];
+    [self.acceptBtn setBackgroundColor:[UIColor colorWithHexString:@"0x4764DC"]];
     self.acceptBtn.layer.cornerRadius = 4.f;
     self.acceptBtn.layer.masksToBounds = YES;
+    [self.acceptBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.acceptBtn.titleLabel.font = [UIFont pingFangSCWithWeight:FontWeightStyleRegular size:12];
     
     [self.contentView addSubview:self.portraitView];
@@ -83,8 +84,8 @@
     }
     if (friendRequest.status == 0 && !expired) {
         [self.acceptBtn setTitle:WFCString(@"Accept") forState:UIControlStateNormal];
-        [self.acceptBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [self.acceptBtn setBackgroundColor:[UIColor greenColor]];
+        [self.acceptBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [self.acceptBtn setBackgroundColor:[UIColor colorWithHexString:@"0x4764DC"]];
         [self.acceptBtn setEnabled:YES];
     } else if (friendRequest.status == 1) {
         [self.acceptBtn setTitle:WFCString(@"Accepted") forState:UIControlStateNormal];

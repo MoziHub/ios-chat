@@ -15,7 +15,7 @@
 #import <WFMomentUIKit/WFMomentUIKit.h>
 #import "UIFont+YH.h"
 #import "UIColor+YH.h"
-
+#import <WFChatUIKit/WFChatUIKit.h>
 @interface DiscoverViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong)UITableView *tableView;
 @property (nonatomic, assign)BOOL hasMoments;
@@ -106,6 +106,25 @@
                   [self.navigationController pushViewController:vc animated:YES];
     }
     
+    if ([des isEqualToString:@"channel"]) {
+        WFCUFavChannelTableViewController *channelVC = [[WFCUFavChannelTableViewController alloc] init];;
+        channelVC.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:channelVC animated:YES];
+    }
+    
+    if ([des isEqualToString:@"rebot"]) {
+            WFCUMessageListViewController *mvc = [[WFCUMessageListViewController alloc] init];
+            mvc.conversation = [[WFCCConversation alloc] init];
+            mvc.conversation.type = Single_Type;
+            mvc.conversation.target = @"FireRobot";
+            mvc.conversation.line = 0;
+        
+            mvc.hidesBottomBarWhenPushed = YES;
+            [self.navigationController pushViewController:mvc animated:YES];
+        
+    }
+    
+
     if ([des isEqualToString:@"Dev"]) {
         WFCUBrowserViewController *vc = [[WFCUBrowserViewController alloc] init];
         vc.hidesBottomBarWhenPushed = YES;

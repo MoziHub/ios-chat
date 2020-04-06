@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../ios-momentkit/WFMomentUIKit.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:wfchat/WildFireChat.xcodeproj">
    </FileRef>
    <FileRef

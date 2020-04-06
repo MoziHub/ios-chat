@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1403DCF0242EF9040070FEE5 /* WFMomentUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1403DCEF242EF9040070FEE5 /* WFMomentUIKit.framework */; };
+		1403DCF1242EF9040070FEE5 /* WFMomentUIKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1403DCEF242EF9040070FEE5 /* WFMomentUIKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		149B3107241D292C00B935D3 /* UIColor+YH.m in Sources */ = {isa = PBXBuildFile; fileRef = 149B3105241D292C00B935D3 /* UIColor+YH.m */; };
 		149B310A241E300C00B935D3 /* UIFont+YH.m in Sources */ = {isa = PBXBuildFile; fileRef = 149B3109241E300C00B935D3 /* UIFont+YH.m */; };
 		149B311E242247E900B935D3 /* UIImage+ERCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 149B311D242247E900B935D3 /* UIImage+ERCategory.m */; };
@@ -16,8 +18,6 @@
 		2BDCE7E32336278E0004212B /* CallKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BDCE7E22336278E0004212B /* CallKit.framework */; };
 		2BED56772395EC5300B55C79 /* WFMomentClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BED56732395EC4D00B55C79 /* WFMomentClient.framework */; };
 		2BED56782395EC5300B55C79 /* WFMomentClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BED56732395EC4D00B55C79 /* WFMomentClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		2BED56792395EC5600B55C79 /* WFMomentUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BED56742395EC4D00B55C79 /* WFMomentUIKit.framework */; };
-		2BED567A2395EC5600B55C79 /* WFMomentUIKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BED56742395EC4D00B55C79 /* WFMomentUIKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2E1D1FFC1FAF0AE600F4405D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E1D1FFB1FAF0AE600F4405D /* AppDelegate.m */; };
 		2E1D20021FAF0AE600F4405D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2E1D20001FAF0AE600F4405D /* Main.storyboard */; };
 		2E1D20041FAF0AE600F4405D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2E1D20031FAF0AE600F4405D /* Assets.xcassets */; };
@@ -102,7 +102,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				2BED567A2395EC5600B55C79 /* WFMomentUIKit.framework in Embed Frameworks */,
+				1403DCF1242EF9040070FEE5 /* WFMomentUIKit.framework in Embed Frameworks */,
 				2F143A84217F876C00B3E38A /* WFChatUIKit.framework in Embed Frameworks */,
 				2BED56782395EC5300B55C79 /* WFMomentClient.framework in Embed Frameworks */,
 				6E616DB520AB3540002CB8BE /* WebRTC.framework in Embed Frameworks */,
@@ -115,6 +115,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1403DCEF242EF9040070FEE5 /* WFMomentUIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WFMomentUIKit.framework; path = "../../../ios-momentkit/bin/WFMomentUIKit.framework"; sourceTree = "<group>"; };
 		149B3105241D292C00B935D3 /* UIColor+YH.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+YH.m"; sourceTree = "<group>"; };
 		149B3106241D292C00B935D3 /* UIColor+YH.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+YH.h"; sourceTree = "<group>"; };
 		149B3108241E300C00B935D3 /* UIFont+YH.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIFont+YH.h"; sourceTree = "<group>"; };
@@ -290,7 +291,7 @@
 				905177502243CD9A0020A2AC /* libz.tbd in Frameworks */,
 				905177542243CEA30020A2AC /* Bugly.framework in Frameworks */,
 				9051774E2243CD8D0020A2AC /* Security.framework in Frameworks */,
-				2BED56792395EC5600B55C79 /* WFMomentUIKit.framework in Frameworks */,
+				1403DCF0242EF9040070FEE5 /* WFMomentUIKit.framework in Frameworks */,
 				9051774C2243CD830020A2AC /* SystemConfiguration.framework in Frameworks */,
 				2BDCE7E1233627450004212B /* PushKit.framework in Frameworks */,
 				2F1B0DEE21E2161E00139CB1 /* CoreTelephony.framework in Frameworks */,
@@ -416,6 +417,7 @@
 		2EAC88E61FB0A0D6004B34D1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1403DCEF242EF9040070FEE5 /* WFMomentUIKit.framework */,
 				2BDCE7E22336278E0004212B /* CallKit.framework */,
 				2BDCE7E0233627450004212B /* PushKit.framework */,
 				905177512243CDA60020A2AC /* libc++.tbd */,
