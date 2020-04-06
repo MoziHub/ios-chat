@@ -21,7 +21,7 @@
 //#import "WFCCIMService.h"
 @interface WFCUSeletedUserViewController ()
 <UITableViewDataSource, UITableViewDelegate,
-UICollectionViewDelegate, UICollectionViewDataSource,
+UICollectionViewDataSource,
 UISearchBarDelegate>
 @property (nonatomic, strong)UITableView *tableView;
 @property (nonatomic, strong)UIView *topView;
@@ -38,8 +38,195 @@ UISearchBarDelegate>
 @end
 
 @implementation WFCUSeletedUserViewController
+#pragma mark - Life Circle
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self loadData];
+    [self setUpUI];
+}
 
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    [self resizeAllView];
+}
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+}
+#pragma mark - kvo
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    if ([keyPath isEqualToString:@"contentSize"]) {
+        [self resizeAllView];
+    }
+}
+
+#pragma mark - UISearchBarDelegate
+- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar {
+    WFCUSeletedUserSearchResultViewController *resultVC = [[WFCUSeletedUserSearchResultViewController alloc] init];
+    __weak typeof(self)weakSelf = self;
+    resultVC.dataSource = self.dataSource;
+      resultVC.needSection = self.type == Horizontal;
+    resultVC.selectedUser = ^(WFCUSelectedUserInfo * _Nonnull user) {
+             [weakSelf refreshSeletedUser:user];
+    };
+    UINavigationController *naviVC = [[UINavigationController alloc] initWithRootViewController:resultVC];
+    naviVC.modalPresentationStyle = UIModalPresentationFullScreen;
+    [self presentViewController:naviVC animated:NO completion:nil];
+    return NO;
+}
+
+#pragma mark - UITableViewDataSource
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    if (self.type == Horizontal) {
+        return self.sectionKeys.count;
+    } else {
+        return 1;
+    }
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (self.type == Horizontal) {
+        NSString *key = self.sectionKeys[section];
+        NSArray *users = self.sectionDictionary[key];
+        return users.count;
+    } else {
+        return self.dataSource.count;
+    }
+    
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    WFCUSelectedUserTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"selectedUserT"];
+    
+    if (self.type == Horizontal) {
+        NSString *key = self.sectionKeys[indexPath.section];
+        NSArray *users = self.sectionDictionary[key];
+        cell.selectedUserInfo = users[indexPath.row];
+    } else {
+        cell.selectedUserInfo = self.dataSource[indexPath.row];
+    }
+    
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    if (self.type == Vertical) {
+        cell.backgroundColor = [UIColor colorWithHexString:@"0x1f2026"];
+        cell.separatorInset = UIEdgeInsetsMake(0, 60, 0, 0);
+        cell.nameLabel.textColor = [UIColor whiteColor];
+        cell.nameLabel.textColor = [UIColor whiteColor];
+    } else {
+        cell.separatorInset = UIEdgeInsetsMake(0, 16, 0, 16);
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.nameLabel.textColor = [UIColor colorWithHexString:@"0x1d1d1d"];
+    }
+    return cell;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    if (self.type == Horizontal) {
+        NSString *title = self.sectionKeys[section];
+        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 30)];
+        view.backgroundColor = [UIColor colorWithHexString:@"0xededed"];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, self.view.frame.size.width, 30)];
+        label.font = [UIFont pingFangSCWithWeight:FontWeightStyleRegular size:13];
+        label.textColor = [UIColor colorWithHexString:@"0x828282"];
+        label.textAlignment = NSTextAlignmentLeft;
+        label.text = [NSString stringWithFormat:@"%@", title];
+        [view addSubview:label];
+        return view;
+        
+    } else {
+        return nil;
+    }
+}
+
+- (NSArray<NSString *> *)sectionIndexTitlesForTableView:(UITableView *)tableView {
+    if (self.type == Horizontal) {
+        return self.sectionKeys;
+    } else {
+        return nil;
+    }
+}
+
+#pragma mark - UITableViewDelegate
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 51;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    if (self.type == Horizontal) {
+        if (section == 0) {
+            return 0;
+        }
+        return 30;
+        
+    } else {
+        return 0;
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.type == Vertical) {
+        WFCUSelectedUserInfo *user = nil;
+        user = self.dataSource[indexPath.row];
+        [self refreshSeletedUser:user];
+    } else {
+        NSString *key = self.sectionKeys[indexPath.section];
+        NSArray *users = self.sectionDictionary[key];
+        WFCUSelectedUserInfo *user = nil;
+        user = users[indexPath.row];
+        [self refreshSeletedUser:user];
+    }
+}
+
+#pragma mark - UICollectionViewDataSource
+- (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    WFCUSelectedUserCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"selectedUserC" forIndexPath:indexPath];
+    cell.user = self.selectedUsers[indexPath.row];
+    cell.isSmall = self.type == Horizontal;
+    return cell;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return self.selectedUsers.count;
+}
+
+#pragma mark - private
+- (void)resizeAllView {
+    CGFloat topSpace = self.navigationController.navigationBar.frame.size.height + [UIApplication sharedApplication].statusBarFrame.size.height;
+    if (self.type == Vertical) {
+        CGFloat collectionViewHeight = 0;
+        CGSize contentSize = self.selectedUserCollectionView.contentSize;
+        if (contentSize.height > 52 * 2 + 10) {
+            collectionViewHeight = 52 * 2 + 10;
+        } else {
+            collectionViewHeight = contentSize.height;
+        }
+        self.selectedUserCollectionView.frame = CGRectMake(16, 0, self.view.frame.size.width - 16 * 2, collectionViewHeight);
+        self.searchBar.frame = CGRectMake(16, collectionViewHeight + 12, self.view.frame.size.width - 16 * 2, 38);
+        self.topView.frame = CGRectMake(0, topSpace, self.view.frame.size.width, collectionViewHeight + 12 + 26 + 16);
+        self.tableView.frame = CGRectMake(0, topSpace + collectionViewHeight + 12 + 26 + 16, self.view.frame.size.width, self.view.frame.size.height - (collectionViewHeight + 12 + 26 + 16));
+    } else {
+        CGFloat collectionViewWidth = 0;
+        CGFloat collectionMaxWidth = self.view.frame.size.width - (16 + SearchBarMinWidth + 8 * 2);
+        CGSize contentSize = self.selectedUserCollectionView.contentSize;
+        if (contentSize.width > collectionMaxWidth) {
+            collectionViewWidth = collectionMaxWidth;
+        } else {
+            collectionViewWidth = contentSize.width;
+        }
+        self.selectedUserCollectionView.frame = CGRectMake(16, 6, collectionViewWidth, 24);
+        self.searchBar.frame = CGRectMake(16 + collectionViewWidth + 8, 0, self.view.frame.size.width - (16 + collectionViewWidth + 8 * 2), 36);
+        self.topView.frame = CGRectMake(0, topSpace, self.view.frame.size.width, 44);
+        self.tableView.frame = CGRectMake(0, topSpace + 44, self.view.frame.size.width, self.view.frame.size.height - 44);
+        
+    }
+    
+}
 
 - (void)loadData {
     self.dataSource = [NSMutableArray new];
@@ -188,70 +375,66 @@ UISearchBarDelegate>
     self.selectResult(selectedUserIds);
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    [self loadData];
-    [self setUpUI];
-    
-    
+- (void)sortAndRefreshWithList:(NSArray *)friendList {
+    //    self.sorting = YES;
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        NSMutableDictionary *resultDic = [WFCUUserSectionKeySupport userSectionKeys:friendList];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.sectionDictionary = resultDic[@"infoDic"];
+            self.sectionKeys = resultDic[@"allKeys"];
+            [self.tableView reloadData];
+        });
+    });
 }
 
-- (void)viewDidLayoutSubviews {
-    [super viewDidLayoutSubviews];
-    [self resizeAllView];
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
-    if ([keyPath isEqualToString:@"contentSize"]) {
-        [self resizeAllView];
+- (BOOL)refreshSeletedUser:(WFCUSelectedUserInfo *)user {
+    if (user.selectedStatus == Disable) {
+        return NO;
+    } else if (user.selectedStatus == Checked) {
+        user.selectedStatus = Unchecked;
+        NSIndexPath *removeIndexPath = [NSIndexPath indexPathForItem:[self.selectedUsers indexOfObject:user] inSection:0];
+        [self.selectedUsers removeObject:user];
+        [self.selectedUserCollectionView deleteItemsAtIndexPaths:@[removeIndexPath]];
+    } else if (user.selectedStatus == Unchecked) {
+        if (self.maxSelectCount > 0 && self.selectedUsers.count >= self.maxSelectCount) {
+            [self.view makeToast:WFCString(@"MaxCount")];
+            return NO;
+        }
+        user.selectedStatus = Checked;
+        [self.selectedUsers addObject:user];
+        NSIndexPath *insertIndexPath = [NSIndexPath indexPathForItem:self.selectedUsers.count - 1 inSection:0];
+        [self.selectedUserCollectionView insertItemsAtIndexPaths:@[insertIndexPath]];
     }
-}
-
-- (void)resizeAllView {
-    CGFloat topSpace = self.navigationController.navigationBar.frame.size.height + [UIApplication sharedApplication].statusBarFrame.size.height;
+    [self setDoneButtonStyleAndContent:self.selectedUsers.count > 0];
+    NSIndexPath *indexPath = nil;
     if (self.type == Vertical) {
-        CGFloat collectionViewHeight = 0;
-        CGSize contentSize = self.selectedUserCollectionView.contentSize;
-        if (contentSize.height > 52 * 2 + 10) {
-            collectionViewHeight = 52 * 2 + 10;
-        } else {
-            collectionViewHeight = contentSize.height;
-        }
-        
-        self.selectedUserCollectionView.frame = CGRectMake(16, 0, self.view.frame.size.width - 16 * 2, collectionViewHeight);
-        self.searchBar.frame = CGRectMake(16, collectionViewHeight + 12, self.view.frame.size.width - 16 * 2, 38);
-        self.topView.frame = CGRectMake(0, topSpace, self.view.frame.size.width, collectionViewHeight + 12 + 26 + 16);
-        self.tableView.frame = CGRectMake(0, topSpace + collectionViewHeight + 12 + 26 + 16, self.view.frame.size.width, self.view.frame.size.height - (collectionViewHeight + 12 + 26 + 16));
+       indexPath = [NSIndexPath indexPathForRow:[self.dataSource indexOfObject:user] inSection:0];
     } else {
-        CGFloat collectionViewWidth = 0;
-        CGFloat collectionMaxWidth = self.view.frame.size.width - (16 + SearchBarMinWidth + 8 * 2);
-        CGSize contentSize = self.selectedUserCollectionView.contentSize;
-        if (contentSize.width > collectionMaxWidth) {
-            collectionViewWidth = collectionMaxWidth;
-        } else {
-            collectionViewWidth = contentSize.width;
-        }
-        self.selectedUserCollectionView.frame = CGRectMake(16, 6, collectionViewWidth, 24);
-        self.searchBar.frame = CGRectMake(16 + collectionViewWidth + 8, 0, self.view.frame.size.width - (16 + collectionViewWidth + 8 * 2), 36);
-        self.topView.frame = CGRectMake(0, topSpace, self.view.frame.size.width, 44);
-        self.tableView.frame = CGRectMake(0, topSpace + 44, self.view.frame.size.width, self.view.frame.size.height - 44);
-        
+        indexPath = [self getSectionIndexPath:user];
     }
+    
+    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+    return YES;
     
 }
 
+- (NSIndexPath *)getSectionIndexPath:(WFCUSelectedUserInfo *)user {
+    NSIndexPath *indexPath = nil;
+    
+    for (NSString *key in self.sectionKeys) {
+        NSArray *users = self.sectionDictionary[key];
+        for (WFCUSelectedUserInfo *u in users) {
+            if ([u isEqual:user]) {
+                NSInteger section = [self.sectionKeys indexOfObject:key];
+                NSInteger row =  [users indexOfObject:u];
+                indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+            }
+        }
+    }
+    return indexPath;
+}
 
+#pragma mark - lazy load
 - (UICollectionView *)selectedUserCollectionView {
     if (!_selectedUserCollectionView) {
         UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
@@ -314,214 +497,6 @@ UISearchBarDelegate>
     }
     return _searchBar;
 }
-
-- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar {
-    WFCUSeletedUserSearchResultViewController *resultVC = [[WFCUSeletedUserSearchResultViewController alloc] init];
-    __weak typeof(self)weakSelf = self;
-    resultVC.dataSource = self.dataSource;
-      resultVC.needSection = self.type == Horizontal;
-    resultVC.selectedUser = ^(WFCUSelectedUserInfo * _Nonnull user) {
-             [weakSelf refreshSeletedUser:user];
-    };
-    UINavigationController *naviVC = [[UINavigationController alloc] initWithRootViewController:resultVC];
-    naviVC.modalPresentationStyle = UIModalPresentationFullScreen;
-    [self presentViewController:naviVC animated:NO completion:nil];
-    return NO;
-}
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    if (self.type == Horizontal) {
-        return self.sectionKeys.count;
-    } else {
-        return 1;
-    }
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (self.type == Horizontal) {
-        NSString *key = self.sectionKeys[section];
-        NSArray *users = self.sectionDictionary[key];
-        return users.count;
-    } else {
-        return self.dataSource.count;
-    }
-    
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    WFCUSelectedUserTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"selectedUserT"];
-    
-    if (self.type == Horizontal) {
-        NSString *key = self.sectionKeys[indexPath.section];
-        NSArray *users = self.sectionDictionary[key];
-        cell.selectedUserInfo = users[indexPath.row];
-    } else {
-        
-        cell.selectedUserInfo = self.dataSource[indexPath.row];
-    }
-    
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    if (self.type == Vertical) {
-        cell.backgroundColor = [UIColor colorWithHexString:@"0x1f2026"];
-        cell.separatorInset = UIEdgeInsetsMake(0, 60, 0, 0);
-        cell.nameLabel.textColor = [UIColor whiteColor];
-        cell.nameLabel.textColor = [UIColor whiteColor];
-        
-        
-    } else {
-        cell.separatorInset = UIEdgeInsetsMake(0, 16, 0, 16);
-        cell.backgroundColor = [UIColor whiteColor];
-        cell.nameLabel.textColor = [UIColor colorWithHexString:@"0x1d1d1d"];
-        
-        
-    }
-    
-    
-    return cell;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 51;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    if (self.type == Horizontal) {
-        if (section == 0) {
-            return 0;
-        }
-        return 30;
-        
-    } else {
-        return 0;
-    }
-    
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    if (self.type == Horizontal) {
-        NSString *title = self.sectionKeys[section];
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 30)];
-        view.backgroundColor = [UIColor colorWithHexString:@"0xededed"];
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, self.view.frame.size.width, 30)];
-        label.font = [UIFont pingFangSCWithWeight:FontWeightStyleRegular size:13];
-        label.textColor = [UIColor colorWithHexString:@"0x828282"];
-        label.textAlignment = NSTextAlignmentLeft;
-        label.text = [NSString stringWithFormat:@"%@", title];
-        [view addSubview:label];
-        return view;
-        
-    } else {
-        return nil;
-    }
-}
-
-- (BOOL)refreshSeletedUser:(WFCUSelectedUserInfo *)user {
-    if (user.selectedStatus == Disable) {
-        return NO;
-    } else if (user.selectedStatus == Checked) {
-        user.selectedStatus = Unchecked;
-        NSIndexPath *removeIndexPath = [NSIndexPath indexPathForItem:[self.selectedUsers indexOfObject:user] inSection:0];
-        [self.selectedUsers removeObject:user];
-        [self.selectedUserCollectionView deleteItemsAtIndexPaths:@[removeIndexPath]];
-    } else if (user.selectedStatus == Unchecked) {
-        if (self.maxSelectCount > 0 && self.selectedUsers.count >= self.maxSelectCount) {
-            [self.view makeToast:WFCString(@"MaxCount")];
-            return NO;
-        }
-        user.selectedStatus = Checked;
-        [self.selectedUsers addObject:user];
-        NSIndexPath *insertIndexPath = [NSIndexPath indexPathForItem:self.selectedUsers.count - 1 inSection:0];
-        [self.selectedUserCollectionView insertItemsAtIndexPaths:@[insertIndexPath]];
-    }
-    [self setDoneButtonStyleAndContent:self.selectedUsers.count > 0];
-    NSIndexPath *indexPath = nil;
-    if (self.type == Vertical) {
-       indexPath = [NSIndexPath indexPathForRow:[self.dataSource indexOfObject:user] inSection:0];
-    } else {
-        indexPath = [self getSectionIndexPath:user];
-    }
-    
-    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-    return YES;
-    
-}
-
-- (NSIndexPath *)getSectionIndexPath:(WFCUSelectedUserInfo *)user {
-    NSIndexPath *indexPath = nil;
-    
-    for (NSString *key in self.sectionKeys) {
-        NSArray *users = self.sectionDictionary[key];
-        for (WFCUSelectedUserInfo *u in users) {
-            if ([u isEqual:user]) {
-                NSInteger section = [self.sectionKeys indexOfObject:key];
-                NSInteger row =  [users indexOfObject:u];
-                indexPath = [NSIndexPath indexPathForRow:row inSection:section];
-            }
-        }
-    }
-    return indexPath;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (self.type == Vertical) {
-        WFCUSelectedUserInfo *user = nil;
-        user = self.dataSource[indexPath.row];
-        [self refreshSeletedUser:user];
-    } else {
-        NSString *key = self.sectionKeys[indexPath.section];
-        NSArray *users = self.sectionDictionary[key];
-        WFCUSelectedUserInfo *user = nil;
-        user = users[indexPath.row];
-        [self refreshSeletedUser:user];
-
-
-    }
-}
-
-- (NSArray<NSString *> *)sectionIndexTitlesForTableView:(UITableView *)tableView {
-    
-    if (self.type == Horizontal) {
-        return self.sectionKeys;
-    } else {
-        return nil;
-    }
-}
-
-- (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    WFCUSelectedUserCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"selectedUserC" forIndexPath:indexPath];
-    cell.user = self.selectedUsers[indexPath.row];
-    cell.isSmall = self.type == Horizontal;
-    return cell;
-}
-
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return self.selectedUsers.count;
-}
-
-- (void)sortAndRefreshWithList:(NSArray *)friendList {
-    //    self.sorting = YES;
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        NSMutableDictionary *resultDic = [WFCUUserSectionKeySupport userSectionKeys:friendList];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.sectionDictionary = resultDic[@"infoDic"];
-            self.sectionKeys = resultDic[@"allKeys"];
-            [self.tableView reloadData];
-        });
-    });
-}
-
-//- (void)setNeedSort:(BOOL)needSort {
-//    _needSort = needSort;
-//    if (needSort && !self.sorting) {
-//        _needSort = NO;
-//        if (self.searchController.active) {
-//            [self sortAndRefreshWithList:self.searchList];
-//        } else {
-//            [self sortAndRefreshWithList:self.dataSource];
-//        }
-//    }
-//}
-
 
 
 @end

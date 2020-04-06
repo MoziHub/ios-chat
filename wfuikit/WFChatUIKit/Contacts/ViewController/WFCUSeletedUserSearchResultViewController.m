@@ -75,18 +75,6 @@
     });
 }
 
-
-- (UITableView *)tableView {
-    if (!_tableView) {
-        _tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
-        _tableView.dataSource = self;
-        _tableView.delegate = self;
-        [_tableView registerClass:[WFCUSelectedUserTableViewCell class] forCellReuseIdentifier:@"selectedUserT"];
-        _tableView.tableFooterView = [UIView new];
-    }
-    return _tableView;
-}
-
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     if (self.needSection) {
         return self.sectionKeys.count;
@@ -181,6 +169,17 @@
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
          [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
         });
+}
+
+- (UITableView *)tableView {
+    if (!_tableView) {
+        _tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
+        _tableView.dataSource = self;
+        _tableView.delegate = self;
+        [_tableView registerClass:[WFCUSelectedUserTableViewCell class] forCellReuseIdentifier:@"selectedUserT"];
+        _tableView.tableFooterView = [UIView new];
+    }
+    return _tableView;
 }
 
 
